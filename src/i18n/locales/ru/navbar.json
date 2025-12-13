@@ -1,0 +1,16 @@
+{
+  "brand": "HomeQadam",
+  "home": "Главная",
+  "about": "О нас",
+  "login": "Войти",
+  "register": "Регистрация",
+  "logout": "Выйти",
+  "client": {
+    "newOrder": "Сделать заказ",
+    "myOrders": "Мои заказы"
+  },
+  "tech": {
+    "orders": "Заказы",
+    "taken": "Принятые заказы"
+  }
+}
