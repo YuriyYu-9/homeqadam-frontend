@@ -20,28 +20,29 @@ const Hero = () => {
   }, []);
 
   return (
-    <section className="bg-gray-50 py-20">
+    <section className="py-20 bg-gray-50">
       <Container>
-        <div className="grid md:grid-cols-2 gap-12 items-center">
+        <div className="grid items-center gap-12 md:grid-cols-2">
           {/* TEXT */}
           <div>
-            <h1 className="text-4xl font-bold mb-6">
-              Найдите проверенного специалиста за минуты
+            <h1 className="mb-6 text-4xl font-bold">
+              Osonly — проверенные специалисты за минуты
             </h1>
-            <p className="text-gray-600 mb-8">
+
+            <p className="mb-8 text-gray-600">
               Платформа для быстрого поиска мастеров и заказов
             </p>
 
             <div className="flex gap-4">
               <a
                 href="/auth/register"
-                className="bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700 transition"
+                className="px-6 py-3 text-white transition bg-blue-600 rounded-lg hover:bg-blue-700"
               >
                 Сделать заказ
               </a>
               <a
                 href="/auth/register"
-                className="border border-blue-600 text-blue-600 px-6 py-3 rounded-lg hover:bg-blue-50 transition"
+                className="px-6 py-3 text-blue-600 transition border border-blue-600 rounded-lg hover:bg-blue-50"
               >
                 Найти заказы
               </a>
