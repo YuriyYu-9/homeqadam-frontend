@@ -1,17 +1,16 @@
 import { useState } from "react";
 import { verify } from "../api/auth.api";
-import { useLocation, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
 export default function Verify() {
   const navigate = useNavigate();
-  const location = useLocation();
 
-  const email = location.state?.email;
+  const email = sessionStorage.getItem("verify_email") || "";
   const [code, setCode] = useState("");
   const [loading, setLoading] = useState(false);
 
   if (!email) {
-    return <div>Нет email для подтверждения</div>;
+    return <div style={{ padding: 16 }}>Нет email для подтверждения. Вернись на регистрацию.</div>;
   }
 
   const handleSubmit = async (e) => {
@@ -20,9 +19,12 @@ export default function Verify() {
 
     try {
       await verify({ email, code });
-      navigate("/auth/login", { replace: true });
-    } catch {
-      alert("Неверный код подтверждения");
+
+      // ✅ очистим и перекинем на логин
+      sessionStorage.removeItem("verify_email");
+      navigate("/auth/login?verified=1", { replace: true });
+    } catch (err) {
+      alert(err?.response?.data?.message || "Неверный код подтверждения");
     } finally {
       setLoading(false);
     }

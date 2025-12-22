@@ -1,4 +1,4 @@
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { Routes, Route } from "react-router-dom";
 
 import MainLayout from "../layout/MainLayout";
 
@@ -10,45 +10,61 @@ import Register from "../auth/Register";
 import Verify from "../auth/Verify";
 
 import ClientDashboard from "../client/ClientDashboard";
+import MyOrders from "../client/MyOrders";
+import NewOrder from "../client/NewOrder";
+
 import TechnicianDashboard from "../technician/TechnicianDashboard";
+import AvailableOrders from "../technician/AvailableOrders";
+import TakenOrders from "../technician/TakenOrders";
+
+import TechnicianPublicProfile from "../technician/TechnicianPublicProfile";
+import TechniciansList from "../technician/TechniciansList";
+
+import ProfileSetup from "../profile/ProfileSetup";
+import AppEntry from "./AppEntry";
 
 import { ProtectedRoute, RoleRoute } from "./ProtectedRoute";
 
 const AppRouter = () => {
   return (
-    <BrowserRouter>
-      <Routes>
-        {/* Общий Layout: navbar + footer */}
-        <Route element={<MainLayout />}>
-          <Route path="/" element={<Home />} />
-          <Route path="/about" element={<About />} />
+    <Routes>
+      <Route element={<MainLayout />}>
+        {/* PUBLIC */}
+        <Route path="/" element={<Home />} />
+        <Route path="/about" element={<About />} />
 
-          {/* AUTH */}
-          <Route path="/auth/login" element={<Login />} />
-          <Route path="/auth/register" element={<Register />} />
-          <Route path="/auth/verify" element={<Verify />} />
+        {/* PUBLIC: technicians */}
+        <Route path="/technicians" element={<TechniciansList />} />
+        <Route path="/technicians/:id" element={<TechnicianPublicProfile />} />
 
-          {/* ЗАЩИЩЁННЫЕ */}
-          <Route element={<ProtectedRoute />}>
-            <Route element={<RoleRoute allowed="CLIENT" />}>
-              <Route path="/client" element={<ClientDashboard />} />
-              {/* заглушки под будущее */}
-              <Route path="/client/orders" element={<ClientDashboard />} />
-              <Route path="/client/orders/new" element={<ClientDashboard />} />
-            </Route>
+        {/* AUTH */}
+        <Route path="/auth/login" element={<Login />} />
+        <Route path="/auth/register" element={<Register />} />
+        <Route path="/auth/verify" element={<Verify />} />
 
-            <Route element={<RoleRoute allowed="TECHNICIAN" />}>
-              <Route path="/technician" element={<TechnicianDashboard />} />
-              {/* заглушки под будущее */}
-              <Route path="/technician/orders" element={<TechnicianDashboard />} />
-              <Route path="/technician/orders/taken" element={<TechnicianDashboard />} />
-            </Route>
+        {/* ENTRY */}
+        <Route path="/app" element={<AppEntry />} />
+
+        {/* PROTECTED */}
+        <Route element={<ProtectedRoute />}>
+          <Route path="/profile/setup" element={<ProfileSetup />} />
+
+          <Route element={<RoleRoute allowed="CLIENT" />}>
+            <Route path="/client" element={<ClientDashboard />} />
+            <Route path="/client/orders" element={<MyOrders />} />
+            <Route path="/client/orders/new" element={<NewOrder />} />
           </Route>
 
-          <Route path="*" element={<div className="max-w-7xl mx-auto px-4 py-16">404</div>} />
+          <Route element={<RoleRoute allowed="TECHNICIAN" />}>
+            <Route path="/technician" element={<TechnicianDashboard />} />
+            <Route path="/technician/orders" element={<AvailableOrders />} />
+            <Route path="/technician/orders/taken" element={<TakenOrders />} />
+          </Route>
         </Route>
-      </Routes>
-    </BrowserRouter>
+
+        <Route path="*" element={<div style={{ padding: 40 }}>404</div>} />
+      </Route>
+    </Routes>
   );
 };
 
