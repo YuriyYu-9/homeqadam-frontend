@@ -90,71 +90,133 @@ const ProfileSetup = () => {
   };
 
   if (loading) {
-    return <div style={{ padding: 40 }}>Загрузка профиля…</div>;
+    return <div className="py-16 text-center text-gray-600">Загрузка профиля…</div>;
   }
 
   return (
-    <section style={{ maxWidth: 640, margin: "40px auto", padding: 16 }}>
-      <h1 style={{ fontSize: 28, marginBottom: 8 }}>
-        {role === "TECHNICIAN" ? "Анкета специалиста" : "Профиль клиента"}
-      </h1>
+    <section className="px-4 py-16">
+      <div className="max-w-2xl p-6 mx-auto border border-blue-100 shadow-sm bg-blue-50 rounded-2xl sm:p-8">
+        <h1 className="mb-2 text-3xl font-bold">
+          {role === "TECHNICIAN" ? "Анкета специалиста" : "Профиль клиента"}
+        </h1>
 
-      <p style={{ marginBottom: 24, color: "#555" }}>
-        {role === "TECHNICIAN"
-          ? "Эти данные увидят клиенты при выборе специалиста."
-          : "Эти данные нужны для связи по заказам."}
-      </p>
+        <p className="mb-6 text-gray-600">
+          {role === "TECHNICIAN"
+            ? "Эта информация будет видна клиентам при выборе специалиста."
+            : "Эти данные используются для связи по вашим заказам."}
+        </p>
 
-      {error && <div style={{ color: "red", marginBottom: 12 }}>{error}</div>}
-
-      <form onSubmit={submit} style={{ display: "grid", gap: 12 }}>
-        <input name="firstName" placeholder="Имя" value={form.firstName} onChange={onChange} required />
-        <input name="lastName" placeholder="Фамилия" value={form.lastName} onChange={onChange} required />
-        <input name="phone" placeholder="Телефон" value={form.phone} onChange={onChange} required />
-        <input name="telegram" placeholder="Telegram (опционально)" value={form.telegram} onChange={onChange} />
-
-        {role === "TECHNICIAN" && (
-          <>
-            <select name="specialty" value={form.specialty} onChange={onChange} required>
-              <option value="">Выберите специальность</option>
-              {SPECIALTIES.map((s) => (
-                <option key={s} value={s}>{s}</option>
-              ))}
-            </select>
-
-            <input
-              type="number"
-              name="experienceYears"
-              min="0"
-              max="80"
-              placeholder="Опыт работы (лет)"
-              value={form.experienceYears}
-              onChange={onChange}
-              required
-            />
-
-            <textarea
-              name="about"
-              placeholder="Опишите ваш опыт и услуги"
-              value={form.about}
-              onChange={onChange}
-              rows={5}
-              required
-            />
-
-            <input
-              name="avatarUrl"
-              placeholder="Ссылка на фото (опционально)"
-              value={form.avatarUrl}
-              onChange={onChange}
-            />
-          </>
+        {error && (
+          <div className="mb-4 text-sm text-red-600">
+            {error}
+          </div>
         )}
 
-        <button type="submit" disabled={saving}>
-          {saving ? "Сохранение..." : "Сохранить профиль"}
-        </button>
-      </form>
+        <form onSubmit={submit} className="grid gap-8">
+          {/* 🔹 Общая информация */}
+          <div className="grid gap-4">
+            <h2 className="text-lg font-semibold">Основные данные</h2>
+
+            <div className="grid gap-4 sm:grid-cols-2">
+              <input
+                name="firstName"
+                placeholder="Имя"
+                value={form.firstName}
+                onChange={onChange}
+                required
+                className="px-4 py-2 border rounded-lg"
+              />
+
+              <input
+                name="lastName"
+                placeholder="Фамилия"
+                value={form.lastName}
+                onChange={onChange}
+                required
+                className="px-4 py-2 border rounded-lg"
+              />
+            </div>
+
+            <input
+              name="phone"
+              placeholder="Телефон для связи"
+              value={form.phone}
+              onChange={onChange}
+              required
+              className="px-4 py-2 border rounded-lg"
+            />
+
+            <input
+              name="telegram"
+              placeholder="Telegram (необязательно)"
+              value={form.telegram}
+              onChange={onChange}
+              className="px-4 py-2 border rounded-lg"
+           >
+            </input>
+          </div>
+
+          {/* 🔹 Блок специалиста */}
+          {role === "TECHNICIAN" && (
+            <div className="grid gap-4 pt-6 border-t">
+              <h2 className="text-lg font-semibold">Профессиональная информация</h2>
+
+              <select
+                name="specialty"
+                value={form.specialty}
+                onChange={onChange}
+                required
+                className="px-4 py-2 border rounded-lg"
+              >
+                <option value="">Выберите специальность</option>
+                {SPECIALTIES.map((s) => (
+                  <option key={s} value={s}>
+                    {s}
+                  </option>
+                ))}
+              </select>
+
+              <input
+                type="number"
+                name="experienceYears"
+                min="0"
+                max="80"
+                placeholder="Опыт работы (лет)"
+                value={form.experienceYears}
+                onChange={onChange}
+                required
+                className="px-4 py-2 border rounded-lg"
+              />
+
+              <textarea
+                name="about"
+                placeholder="Кратко опишите ваш опыт, навыки и услуги"
+                value={form.about}
+                onChange={onChange}
+                rows={5}
+                required
+                className="px-4 py-2 border rounded-lg resize-none"
+              />
+
+              <input
+                name="avatarUrl"
+                placeholder="Ссылка на фото (необязательно)"
+                value={form.avatarUrl}
+                onChange={onChange}
+                className="px-4 py-2 border rounded-lg"
+              />
+            </div>
+          )}
+
+          <button
+            type="submit"
+            disabled={saving}
+            className="w-full px-6 py-3 text-white bg-blue-600 rounded-lg hover:bg-blue-700 disabled:opacity-60"
+          >
+            {saving ? "Сохранение..." : "Сохранить профиль"}
+          </button>
+        </form>
+      </div>
     </section>
   );
 };
