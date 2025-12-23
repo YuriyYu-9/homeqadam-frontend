@@ -23,6 +23,8 @@ import TechniciansList from "../technician/TechniciansList";
 import ProfileSetup from "../profile/ProfileSetup";
 import AppEntry from "./AppEntry";
 
+import ReviewsPage from "../reviews/ReviewsPage";
+
 import { ProtectedRoute, RoleRoute } from "./ProtectedRoute";
 
 const AppRouter = () => {
@@ -32,6 +34,7 @@ const AppRouter = () => {
         {/* PUBLIC */}
         <Route path="/" element={<Home />} />
         <Route path="/about" element={<About />} />
+        <Route path="/reviews" element={<ReviewsPage />} />
 
         {/* PUBLIC: technicians */}
         <Route path="/technicians" element={<TechniciansList />} />

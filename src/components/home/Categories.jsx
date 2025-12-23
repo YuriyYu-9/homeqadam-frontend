@@ -1,29 +1,17 @@
 import Container from "../ui/Container";
 
 const categories = [
-  {
-    title: "Сантехника",
-    image: "/images/hero/Plumber.png",
-  },
-  {
-    title: "Электрика",
-    image: "/images/hero/Electric.png",
-  },
-  {
-    title: "Уборка",
-    image: "/images/hero/Cleaner.png",
-  },
-  {
-    title: "Ремонт техники",
-    image: "/images/hero/TechRepair.png",
-  },
+  { title: "Сантехника", image: "/images/hero/Plumber.png" },
+  { title: "Электрика", image: "/images/hero/Electric.png" },
+  { title: "Уборка", image: "/images/hero/Cleaner.png" },
+  { title: "Ремонт техники", image: "/images/hero/TechRepair.png" },
 ];
 
 const Categories = () => {
   return (
-    <section className="py-20">
+    <section className="py-16 sm:py-20 bg-gray-50">
       <Container>
-        <h2 className="text-3xl font-bold mb-10 text-center">
+        <h2 className="mb-10 text-2xl font-bold text-center sm:text-3xl">
           Популярные категории услуг
         </h2>
 
@@ -31,7 +19,7 @@ const Categories = () => {
           {categories.map((item) => (
             <div
               key={item.title}
-              className="bg-white rounded-xl shadow hover:shadow-md transition p-6 text-center"
+              className="p-6 text-center transition bg-white border rounded-xl hover:shadow-md"
             >
               <img
                 src={item.image}

@@ -20,22 +20,27 @@ const steps = [
 
 const HowItWorks = () => {
   return (
-    <section className="bg-gray-50 py-20">
-      <div className="max-w-7xl mx-auto px-4 text-center">
-        <h2 className="text-3xl font-bold mb-12">Как это работает</h2>
+    <section className="py-16 bg-white sm:py-20">
+      <div className="px-4 mx-auto text-center max-w-7xl">
+        <h2 className="mb-12 text-2xl font-bold sm:text-3xl">
+          Как это работает
+        </h2>
 
-        <div className="grid md:grid-cols-3 gap-8">
-          {steps.map((step) => {
-            const IconComponent = step.Icon; // ← обычное JS-использование
+        <div className="grid gap-8 md:grid-cols-3">
+          {steps.map(({ Icon, title, text }) => {
+            const IconComponent = Icon;
 
             return (
-              <div key={step.title} className="p-6 bg-white rounded-xl">
+              <div
+                key={title}
+                className="p-6 border rounded-xl bg-gray-50"
+              >
                 <IconComponent
                   className="mx-auto mb-4 text-blue-600"
                   size={36}
                 />
-                <h4 className="font-semibold mb-2">{step.title}</h4>
-                <p className="text-gray-600 text-sm">{step.text}</p>
+                <h4 className="mb-2 font-semibold">{title}</h4>
+                <p className="text-sm text-gray-600">{text}</p>
               </div>
             );
           })}

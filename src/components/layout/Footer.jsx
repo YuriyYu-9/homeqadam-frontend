@@ -7,16 +7,27 @@ export default function Footer() {
   return (
     <footer className="mt-16 bg-white border-t">
       <Container>
-        <div className="flex flex-col gap-4 py-10 md:flex-row md:items-center md:justify-between">
+        <div
+          className="flex flex-col gap-6 py-10 text-center  md:flex-row md:items-center md:justify-between md:text-left"
+        >
+          {/* LEFT */}
           <div className="text-sm text-gray-600">
-            © {year} Osonly. Все права защищены.
+            © {year} <span className="font-medium">Osonly</span>. Все права защищены.
           </div>
 
-          <div className="flex flex-wrap text-sm gap-x-6 gap-y-2">
-            <Link to="/legal" className="text-gray-700 hover:text-blue-600">
+          {/* RIGHT */}
+          <div className="flex flex-col items-center gap-3 text-sm md:flex-row md:gap-6">
+            <Link
+              to="/legal"
+              className="text-gray-700 transition-colors hover:text-blue-600"
+            >
               Пользовательское соглашение
             </Link>
-            <Link to="/privacy" className="text-gray-700 hover:text-blue-600">
+
+            <Link
+              to="/privacy"
+              className="text-gray-700 transition-colors hover:text-blue-600"
+            >
               Политика конфиденциальности
             </Link>
           </div>

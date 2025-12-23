@@ -16,7 +16,10 @@ const TechniciansList = () => {
         if (!cancelled) setItems(res || []);
       } catch (e) {
         if (!cancelled) {
-          setMsg(e?.response?.data?.message || "Ошибка загрузки списка мастеров");
+          setMsg(
+            e?.response?.data?.message ||
+              "Ошибка загрузки списка специалистов"
+          );
         }
       } finally {
         if (!cancelled) setLoading(false);
@@ -29,66 +32,114 @@ const TechniciansList = () => {
     };
   }, []);
 
-  if (loading) return <div style={{ padding: 40 }}>Загрузка…</div>;
-  if (msg) return <div style={{ padding: 40, color: "red" }}>{msg}</div>;
+  if (loading) {
+    return (
+      <section className="py-20 text-center text-gray-600">
+        Загрузка специалистов…
+      </section>
+    );
+  }
+
+  if (msg) {
+    return (
+      <section className="py-20 text-center text-red-600">
+        {msg}
+      </section>
+    );
+  }
 
   return (
-    <section style={{ maxWidth: 900, margin: "40px auto", padding: 16 }}>
-      <h1 style={{ fontSize: 28, marginBottom: 16 }}>Специалисты</h1>
+    <section className="py-16 sm:py-20 bg-gray-50">
+      <div className="px-4 mx-auto max-w-7xl">
+        {/* HEADER */}
+        <div className="max-w-3xl mx-auto mb-12 text-center">
+          <h1 className="mb-4 text-2xl font-bold sm:text-3xl">
+            Специалисты платформы
+          </h1>
+          <p className="text-gray-600">
+            Здесь представлены специалисты, готовые принять заказы.
+            Ознакомьтесь с их опытом, специализацией и выберите подходящего
+            исполнителя для своей задачи.
+          </p>
+        </div>
 
-      {items.length === 0 && (
-        <div>Пока нет доступных анкет мастеров.</div>
-      )}
-
-      <div style={{ display: "grid", gap: 12 }}>
-        {items.map((t) => (
-          <div
-            key={t.userId}
-            style={{
-              border: "1px solid #ddd",
-              borderRadius: 10,
-              padding: 12,
-              display: "flex",
-              justifyContent: "space-between",
-              gap: 12,
-            }}
-          >
-            <div>
-              <div style={{ fontSize: 18 }}>
-                <b>{t.firstName} {t.lastName}</b>
-              </div>
-
-              <div style={{ color: "#555", marginTop: 4 }}>
-                {t.specialty} · опыт: <b>{t.experienceYears}</b> лет
-              </div>
-
-              {t.telegram && (
-                <div style={{ marginTop: 6 }}>
-                  Telegram:{" "}
-                  <a
-                    href={`https://t.me/${t.telegram.replace("@", "")}`}
-                    target="_blank"
-                    rel="noreferrer"
-                  >
-                    {t.telegram}
-                  </a>
-                </div>
-              )}
-            </div>
-
-            <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
-              {t.avatarUrl && (
-                <img
-                  src={t.avatarUrl}
-                  alt="avatar"
-                  style={{ width: 56, height: 56, borderRadius: 10, objectFit: "cover" }}
-                />
-              )}
-
-              <Link to={`/technicians/${t.userId}`}>Открыть профиль</Link>
-            </div>
+        {items.length === 0 && (
+          <div className="text-center text-gray-600">
+            Пока нет доступных анкет специалистов.
           </div>
-        ))}
+        )}
+
+        {/* GRID */}
+        <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+          {items.map((t) => {
+            const avatarSrc =
+              t.avatarUrl || "/images/anonymus_avatar.png";
+
+            return (
+              <div
+                key={t.userId}
+                className="flex flex-col justify-between p-6 transition bg-white border  rounded-2xl hover:shadow-md"
+              >
+                {/* TOP */}
+                <div className="flex items-center gap-4 mb-6">
+                  <img
+                    src={avatarSrc}
+                    alt="avatar"
+                    className="object-cover w-16 h-16 border rounded-xl"
+                  />
+
+                  <div>
+                    <div className="text-lg font-semibold">
+                      {t.firstName} {t.lastName}
+                    </div>
+                    <div className="text-sm text-gray-600">
+                      {t.specialty} · опыт {t.experienceYears} лет
+                    </div>
+                  </div>
+                </div>
+
+                {/* CONTACT */}
+                <div className="mb-6 text-sm text-gray-600">
+                  {t.telegram ? (
+                    <>
+                      Telegram:{" "}
+                      <a
+                        href={`https://t.me/${t.telegram.replace(
+                          "@",
+                          ""
+                        )}`}
+                        target="_blank"
+                        rel="noreferrer"
+                        className="text-blue-600 hover:underline"
+                      >
+                        {t.telegram}
+                      </a>
+                    </>
+                  ) : (
+                    <span>Контактные данные доступны в профиле</span>
+                  )}
+                </div>
+
+                {/* ACTION */}
+                <Link
+                  to={`/technicians/${t.userId}`}
+                  className="inline-block px-4 py-2 mt-auto text-center text-blue-600 transition border rounded-lg  hover:bg-blue-50"
+                >
+                  Открыть профиль
+                </Link>
+              </div>
+            );
+          })}
+        </div>
+
+        {/* BOTTOM INFO */}
+        <div className="max-w-4xl p-6 mx-auto mt-16 text-center border border-blue-100 bg-blue-50 rounded-2xl sm:p-8">
+          <p className="text-gray-700">
+            Публичные профили и отзывы помогают клиентам сделать
+            осознанный выбор, а специалистам — продемонстрировать свой
+            опыт и профессиональный уровень.
+          </p>
+        </div>
       </div>
     </section>
   );

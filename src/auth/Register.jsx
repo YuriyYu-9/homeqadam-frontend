@@ -9,17 +9,49 @@ export default function Register() {
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
+  const [agree, setAgree] = useState(false);
+
+  const [showPrivacy, setShowPrivacy] = useState(false);
+  const [showTerms, setShowTerms] = useState(false);
+
   const [loading, setLoading] = useState(false);
+  const [submitted, setSubmitted] = useState(false);
 
   const navigate = useNavigate();
 
+  /* ===== VALIDATION ===== */
+  const emailValid = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+
+  const passwordChecks = {
+    length: password.length >= 8,
+    lower: /[a-z]/.test(password),
+    upper: /[A-Z]/.test(password),
+    digit: /\d/.test(password),
+  };
+
+  const isPasswordValid = Object.values(passwordChecks).every(Boolean);
+  const isPasswordMatch =
+    password.length > 0 &&
+    confirmPassword.length > 0 &&
+    password === confirmPassword;
+
+  const canSubmit =
+    emailValid &&
+    isPasswordValid &&
+    isPasswordMatch &&
+    agree &&
+    !loading;
+
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setLoading(true);
+    setSubmitted(true);
 
+    if (!canSubmit) return;
+
+    setLoading(true);
     try {
       await register({ email, password, role });
-
       sessionStorage.setItem("verify_email", email);
       navigate("/auth/verify", { replace: true });
     } catch (err) {
@@ -30,48 +62,176 @@ export default function Register() {
   };
 
   return (
-    <section className="max-w-md px-4 py-16 mx-auto">
-      <h1 className="mb-6 text-3xl font-bold">
-        Регистрация {role === "TECHNICIAN" ? "специалиста" : "клиента"}
-      </h1>
+    <section className="flex items-center justify-center min-h-screen px-2 bg-gray-50 sm:px-4">
+      <div
+        className="
+          w-full
+          max-w-lg
+          bg-blue-50
+          border border-blue-100
+          rounded-none sm:rounded-2xl
+          shadow-none sm:shadow-md
+          p-6 sm:p-8
+          min-h-[calc(100vh-1rem)] sm:min-h-0
+          flex flex-col justify-center
+        "
+      >
+        <h1 className="mb-6 text-2xl font-bold text-center sm:text-3xl">
+          Регистрация {role === "TECHNICIAN" ? "специалиста" : "клиента"}
+        </h1>
 
-      <form onSubmit={handleSubmit} className="grid gap-4">
-        <input
-          type="email"
-          placeholder="Email"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-          required
-          className="px-3 py-2 border rounded-lg"
-        />
+        <form onSubmit={handleSubmit} className="grid gap-4">
+          {/* EMAIL */}
+          <input
+            type="email"
+            placeholder="Email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            className={`px-3 py-2 border rounded-lg ${
+              email && !emailValid ? "border-red-500" : ""
+            }`}
+            required
+          />
+          {email && !emailValid && (
+            <div className="text-sm text-red-600">
+              Введите корректный email
+            </div>
+          )}
 
-        <input
-          type="password"
-          placeholder="Пароль (минимум 6 символов)"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-          required
-          className="px-3 py-2 border rounded-lg"
-        />
+          {/* PASSWORD */}
+          <input
+            type="password"
+            placeholder="Пароль"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            className="px-3 py-2 border rounded-lg"
+            required
+          />
 
-        <button
-          type="submit"
-          disabled={loading}
-          className="px-4 py-2 text-white bg-blue-600 rounded-lg hover:bg-blue-700 disabled:opacity-60"
-        >
-          {loading ? "Регистрация..." : "Зарегистрироваться"}
-        </button>
-      </form>
+          {/* PASSWORD RULES (animated) */}
+          <div
+            className={`
+              overflow-hidden transition-all duration-300
+              ${password.length > 0 ? "max-h-40 opacity-100" : "max-h-0 opacity-0"}
+            `}
+          >
+            <div className="mt-2 space-y-1 text-base">
+              <p className={passwordChecks.length ? "text-green-600" : "text-red-600"}>
+                • Минимум 8 символов
+              </p>
+              <p className={passwordChecks.lower ? "text-green-600" : "text-red-600"}>
+                • Строчная буква
+              </p>
+              <p className={passwordChecks.upper ? "text-green-600" : "text-red-600"}>
+                • Заглавная буква
+              </p>
+              <p className={passwordChecks.digit ? "text-green-600" : "text-red-600"}>
+                • Цифра
+              </p>
+            </div>
+          </div>
 
-      {/* UX block */}
-      <div className="pt-6 mt-8 text-sm text-center text-gray-600 border-t">
-        <p>
+          {/* CONFIRM PASSWORD */}
+          <input
+            type="password"
+            placeholder="Повторите пароль"
+            value={confirmPassword}
+            onChange={(e) => setConfirmPassword(e.target.value)}
+            className={`px-3 py-2 border rounded-lg ${
+              confirmPassword && !isPasswordMatch ? "border-red-500" : ""
+            }`}
+            required
+          />
+          {confirmPassword && !isPasswordMatch && (
+            <div className="text-sm text-red-600">
+              Пароли не совпадают
+            </div>
+          )}
+
+          {/* AGREEMENT */}
+          <label className="flex items-start gap-2 text-sm text-gray-700">
+            <input
+              type="checkbox"
+              checked={agree}
+              onChange={(e) => setAgree(e.target.checked)}
+              className="mt-1"
+            />
+            <span>
+              Я соглашаюсь с{" "}
+              <button
+                type="button"
+                onClick={() => setShowPrivacy(true)}
+                className="text-blue-600 hover:underline"
+              >
+                Политикой конфиденциальности
+              </button>{" "}
+              и{" "}
+              <button
+                type="button"
+                onClick={() => setShowTerms(true)}
+                className="text-blue-600 hover:underline"
+              >
+                Пользовательским соглашением
+              </button>
+            </span>
+          </label>
+
+          {submitted && !agree && (
+            <div className="text-sm text-red-600">
+              Необходимо согласие для продолжения
+            </div>
+          )}
+
+          {/* SUBMIT */}
+          <button
+            type="submit"
+            disabled={!canSubmit}
+            className="px-4 py-3 mt-4 text-white bg-blue-600 rounded-lg hover:bg-blue-700 disabled:opacity-50"
+          >
+            {loading ? "Регистрация..." : "Зарегистрироваться"}
+          </button>
+        </form>
+
+        <div className="pt-6 mt-8 text-sm text-center text-gray-600 border-t">
           Уже есть аккаунт?{" "}
           <Link to="/auth/login" className="text-blue-600 hover:underline">
             Войти
           </Link>
-        </p>
+        </div>
       </div>
+
+      {showPrivacy && (
+        <Modal title="Политика конфиденциальности" onClose={() => setShowPrivacy(false)}>
+          <p className="text-sm text-gray-700">
+            Здесь будет размещён текст политики конфиденциальности сервиса Osonly.
+          </p>
+        </Modal>
+      )}
+
+      {showTerms && (
+        <Modal title="Пользовательское соглашение" onClose={() => setShowTerms(false)}>
+          <p className="text-sm text-gray-700">
+            Здесь будет размещён текст пользовательского соглашения сервиса Osonly.
+          </p>
+        </Modal>
+      )}
     </section>
+  );
+}
+
+function Modal({ title, children, onClose }) {
+  return (
+    <div className="fixed inset-0 z-50 flex items-center justify-center px-4 bg-black/40">
+      <div className="bg-white rounded-xl max-w-lg w-full p-6 max-h-[90vh] overflow-y-auto relative">
+        <h2 className="mb-4 text-xl font-semibold">{title}</h2>
+        <div>{children}</div>
+        <button
+          onClick={onClose}
+          className="absolute text-gray-500 top-3 right-3 hover:text-black"
+        >
+          ✕
+        </button>
+      </div>
+    </div>
   );
 }

@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { getPublicTechnician } from "../api/technicians.api";
+import TechnicianReviews from "../reviews/TechnicianReviews";
 
 const TechnicianPublicProfile = () => {
   const { id } = useParams();
@@ -20,7 +21,7 @@ const TechnicianPublicProfile = () => {
         if (!cancelled) {
           setError(
             e?.response?.status === 404
-              ? "Мастер не найден"
+              ? "Специалист не найден"
               : "Ошибка загрузки профиля"
           );
         }
@@ -36,54 +37,97 @@ const TechnicianPublicProfile = () => {
   }, [id]);
 
   if (loading) {
-    return <div style={{ padding: 40 }}>Загрузка профиля…</div>;
+    return (
+      <section className="py-20 text-center text-gray-600">
+        Загрузка профиля…
+      </section>
+    );
   }
 
   if (error) {
-    return <div style={{ padding: 40, color: "red" }}>{error}</div>;
+    return (
+      <section className="py-20 text-center text-red-600">
+        {error}
+      </section>
+    );
   }
 
+  if (!data) return null;
+
+  const avatarSrc = data.avatarUrl || "/images/anonymus_avatar.png";
+
   return (
-    <section style={{ maxWidth: 800, margin: "40px auto", padding: 16 }}>
-      <h1 style={{ fontSize: 28, marginBottom: 4 }}>
-        {data.firstName} {data.lastName}
-      </h1>
+    <section className="py-16 sm:py-20 bg-gray-50">
+      <div className="max-w-5xl px-4 mx-auto">
+        {/* PROFILE CARD */}
+        <div className="p-6 mb-16 border border-blue-100 bg-blue-50 rounded-3xl sm:p-8">
+          <div className="grid gap-8 md:grid-cols-[1fr_240px] items-start">
+            {/* INFO */}
+            <div>
+              <h1 className="mb-2 text-2xl font-bold sm:text-3xl">
+                {data.firstName} {data.lastName}
+              </h1>
 
-      <div style={{ color: "#555", marginBottom: 16 }}>
-        Специализация: <b>{data.specialty}</b>
-      </div>
+              <div className="mb-4 text-gray-700">
+                <span className="font-medium">{data.specialty}</span> · опыт{" "}
+                <b>{data.experienceYears}</b> лет
+              </div>
 
-      <div style={{ marginBottom: 16 }}>
-        Опыт работы: <b>{data.experienceYears} лет</b>
-      </div>
+              {data.about && (
+                <div className="mb-6">
+                  <h3 className="mb-2 font-semibold">
+                    О специалисте
+                  </h3>
+                  <p className="text-gray-700 whitespace-pre-line">
+                    {data.about}
+                  </p>
+                </div>
+              )}
 
-      {data.avatarUrl && (
-        <div style={{ marginBottom: 16 }}>
-          <img
-            src={data.avatarUrl}
-            alt="Фото мастера"
-            style={{ maxWidth: 200, borderRadius: 8 }}
-          />
+              {data.telegram && (
+                <div className="text-gray-700">
+                  <span className="font-medium">Telegram:</span>{" "}
+                  <a
+                    href={`https://t.me/${data.telegram.replace(
+                      "@",
+                      ""
+                    )}`}
+                    target="_blank"
+                    rel="noreferrer"
+                    className="text-blue-600 hover:underline"
+                  >
+                    {data.telegram}
+                  </a>
+                </div>
+              )}
+            </div>
+
+            {/* AVATAR */}
+            <div className="flex justify-center md:justify-end">
+              <img
+                src={avatarSrc}
+                alt="Фото специалиста"
+                className="object-cover w-40 h-40 border  sm:w-48 sm:h-48 rounded-2xl"
+              />
+            </div>
+          </div>
         </div>
-      )}
 
-      <div style={{ marginBottom: 16 }}>
-        <h3>О специалисте</h3>
-        <p style={{ whiteSpace: "pre-line", color: "#333" }}>{data.about}</p>
-      </div>
+        {/* REVIEWS */}
+        <div className="max-w-4xl mx-auto">
+          <div className="mb-6">
+            <h2 className="mb-2 text-xl font-bold sm:text-2xl">
+              Отзывы клиентов
+            </h2>
+            <p className="text-gray-600">
+              Отзывы оставлены клиентами после выполнения заказов
+              и отражают реальный опыт взаимодействия со специалистом.
+            </p>
+          </div>
 
-      {data.telegram && (
-        <div style={{ marginTop: 16 }}>
-          <b>Telegram:</b>{" "}
-          <a
-            href={`https://t.me/${data.telegram.replace("@", "")}`}
-            target="_blank"
-            rel="noreferrer"
-          >
-            {data.telegram}
-          </a>
+          <TechnicianReviews technicianId={data.userId} />
         </div>
-      )}
+      </div>
     </section>
   );
 };

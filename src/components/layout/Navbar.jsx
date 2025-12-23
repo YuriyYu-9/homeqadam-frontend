@@ -2,18 +2,33 @@ import { Link, useNavigate } from "react-router-dom";
 import { useState } from "react";
 import { useAuth } from "../../store/useAuth";
 
+/* ✅ ВАЖНО: компонент объявлен ВНЕ Navbar */
+const NavItem = ({ to, children, onClick }) => (
+  <Link
+    to={to}
+    onClick={onClick}
+    className="hover:text-blue-600"
+  >
+    {children}
+  </Link>
+);
+
 const Navbar = () => {
   const navigate = useNavigate();
   const { token, role, displayName, logout, loading } = useAuth();
-  const [open, setOpen] = useState(false);
+
+  const [profileOpen, setProfileOpen] = useState(false);
+  const [mobileOpen, setMobileOpen] = useState(false);
+
+  const closeMobile = () => setMobileOpen(false);
 
   const onLogout = () => {
     logout();
-    setOpen(false);
+    setProfileOpen(false);
+    setMobileOpen(false);
     navigate("/", { replace: true });
   };
 
-  // dashboard по роли
   const dashboardLink =
     role === "CLIENT"
       ? "/client"
@@ -30,94 +45,53 @@ const Navbar = () => {
           <span className="text-lg font-bold">Osonly</span>
         </Link>
 
-        {/* NAV */}
-        <nav className="flex items-center gap-6">
-          <Link to="/about" className="hover:text-blue-600">
-            О нас
-          </Link>
-
-          {/* 🔐 Авторизованные */}
+        {/* DESKTOP NAV */}
+        <nav className="items-center hidden gap-6 md:flex">
           {token && !loading && (
             <>
-              {/* Dashboard */}
-              <Link
-                to={dashboardLink}
-                className="font-medium hover:text-blue-600"
-              >
-                Dashboard
-              </Link>
+              <NavItem to={dashboardLink}>Dashboard</NavItem>
 
-              {/* CLIENT */}
               {role === "CLIENT" && (
                 <>
-                  <Link
-                    to="/client/orders/new"
-                    className="hover:text-blue-600"
-                  >
-                    Сделать заказ
-                  </Link>
-
-                  <Link
-                    to="/client/orders"
-                    className="hover:text-blue-600"
-                  >
-                    Мои заказы
-                  </Link>
-
-                  <Link
-                    to="/technicians"
-                    className="hover:text-blue-600"
-                  >
-                    Найти мастера
-                  </Link>
+                  <NavItem to="/client/orders/new">Сделать заказ</NavItem>
+                  <NavItem to="/client/orders">Мои заказы</NavItem>
+                  <NavItem to="/technicians">Найти мастера</NavItem>
                 </>
               )}
 
-              {/* TECHNICIAN */}
               {role === "TECHNICIAN" && (
                 <>
-                  <Link
-                    to="/technician/orders"
-                    className="hover:text-blue-600"
-                  >
-                    Найти заказы
-                  </Link>
-
-                  <Link
-                    to="/technician/orders/taken"
-                    className="hover:text-blue-600"
-                  >
+                  <NavItem to="/technician/orders">Найти заказы</NavItem>
+                  <NavItem to="/technician/orders/taken">
                     Принятые заказы
-                  </Link>
+                  </NavItem>
                 </>
               )}
             </>
           )}
 
-          {/* Публичная часть */}
-          {!token && (
-            <Link to="/auth/login" className="hover:text-blue-600">
-              Войти
-            </Link>
-          )}
+          {!token && <NavItem to="/auth/login">Войти</NavItem>}
+
+          <NavItem to="/reviews">Отзывы</NavItem>
+          <NavItem to="/about">О нас</NavItem>
         </nav>
 
-        {/* PROFILE DROPDOWN */}
+        {/* PROFILE (DESKTOP) */}
         {token && (
-          <div className="relative">
+          <div className="relative hidden md:block">
             <button
+              onClick={() => setProfileOpen((s) => !s)}
               className="px-3 py-2 border rounded-lg hover:bg-gray-50"
-              onClick={() => setOpen((s) => !s)}
             >
               {displayName || "Профиль"} <span className="opacity-60">▾</span>
             </button>
 
-            {open && (
+            {profileOpen && (
               <div className="absolute right-0 w-48 mt-2 bg-white border rounded-lg shadow">
                 <button
                   className="w-full px-4 py-2 text-left hover:bg-gray-50"
                   onClick={() => {
-                    setOpen(false);
+                    setProfileOpen(false);
                     navigate("/profile/setup");
                   }}
                 >
@@ -134,7 +108,89 @@ const Navbar = () => {
             )}
           </div>
         )}
+
+        {/* BURGER (MOBILE) */}
+        <button
+          className="px-3 py-2 border rounded-lg md:hidden"
+          onClick={() => setMobileOpen((s) => !s)}
+        >
+          ☰
+        </button>
       </div>
+
+      {/* MOBILE MENU */}
+      {mobileOpen && (
+        <div className="bg-white border-t md:hidden">
+          <nav className="flex flex-col gap-3 px-4 py-4">
+            {token && !loading && (
+              <>
+                <NavItem to={dashboardLink} onClick={closeMobile}>
+                  Dashboard
+                </NavItem>
+
+                {role === "CLIENT" && (
+                  <>
+                    <NavItem to="/client/orders/new" onClick={closeMobile}>
+                      Сделать заказ
+                    </NavItem>
+                    <NavItem to="/client/orders" onClick={closeMobile}>
+                      Мои заказы
+                    </NavItem>
+                    <NavItem to="/technicians" onClick={closeMobile}>
+                      Найти мастера
+                    </NavItem>
+                  </>
+                )}
+
+                {role === "TECHNICIAN" && (
+                  <>
+                    <NavItem to="/technician/orders" onClick={closeMobile}>
+                      Найти заказы
+                    </NavItem>
+                    <NavItem to="/technician/orders/taken" onClick={closeMobile}>
+                      Принятые заказы
+                    </NavItem>
+                  </>
+                )}
+              </>
+            )}
+
+            {!token && (
+              <NavItem to="/auth/login" onClick={closeMobile}>
+                Войти
+              </NavItem>
+            )}
+
+            <NavItem to="/reviews" onClick={closeMobile}>
+              Отзывы
+            </NavItem>
+            <NavItem to="/about" onClick={closeMobile}>
+              О нас
+            </NavItem>
+
+            {token && (
+              <>
+                <hr />
+                <button
+                  className="text-left hover:text-blue-600"
+                  onClick={() => {
+                    closeMobile();
+                    navigate("/profile/setup");
+                  }}
+                >
+                  Профиль
+                </button>
+                <button
+                  className="text-left text-red-600"
+                  onClick={onLogout}
+                >
+                  Выйти
+                </button>
+              </>
+            )}
+          </nav>
+        </div>
+      )}
     </header>
   );
 };
