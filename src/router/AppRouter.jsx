@@ -27,6 +27,9 @@ import ReviewsPage from "../reviews/ReviewsPage";
 
 import { ProtectedRoute, RoleRoute } from "./ProtectedRoute";
 
+// 🆕 ADMIN
+import AdminOrders from "../admin/AdminOrders";
+
 const AppRouter = () => {
   return (
     <Routes>
@@ -51,6 +54,9 @@ const AppRouter = () => {
         {/* PROTECTED */}
         <Route element={<ProtectedRoute />}>
           <Route path="/profile/setup" element={<ProfileSetup />} />
+
+          {/* ADMIN */}
+          <Route path="/admin" element={<AdminOrders />} />
 
           <Route element={<RoleRoute allowed="CLIENT" />}>
             <Route path="/client" element={<ClientDashboard />} />

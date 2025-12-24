@@ -1,0 +1,13 @@
+{
+  "dashboard": "Kabinet",
+  "createOrder": "Buyurtma berish",
+  "myOrders": "Mening buyurtmalarim",
+  "findTechnician": "Usta topish",
+  "findOrders": "Buyurtmalarni topish",
+  "takenOrders": "Qabul qilingan buyurtmalar",
+  "login": "Kirish",
+  "reviews": "Sharhlar",
+  "about": "Biz haqimizda",
+  "profile": "Profil",
+  "logout": "Chiqish"
+}

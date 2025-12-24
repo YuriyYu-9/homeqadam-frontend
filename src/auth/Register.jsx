@@ -1,8 +1,11 @@
 import { useState } from "react";
 import { register } from "../api/auth.api";
 import { useNavigate, useSearchParams, Link } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 
 export default function Register() {
+  const { t } = useTranslation("auth");
+
   const [searchParams] = useSearchParams();
   const roleFromUrl = searchParams.get("role");
   const role = roleFromUrl === "TECHNICIAN" ? "TECHNICIAN" : "CLIENT";
@@ -55,7 +58,7 @@ export default function Register() {
       sessionStorage.setItem("verify_email", email);
       navigate("/auth/verify", { replace: true });
     } catch (err) {
-      alert(err?.response?.data?.message || "Ошибка регистрации");
+      alert(err?.response?.data?.message || t("errors.register"));
     } finally {
       setLoading(false);
     }
@@ -77,14 +80,16 @@ export default function Register() {
         "
       >
         <h1 className="mb-6 text-2xl font-bold text-center sm:text-3xl">
-          Регистрация {role === "TECHNICIAN" ? "специалиста" : "клиента"}
+          {role === "TECHNICIAN"
+            ? t("titleTechnician")
+            : t("titleClient")}
         </h1>
 
         <form onSubmit={handleSubmit} className="grid gap-4">
           {/* EMAIL */}
           <input
             type="email"
-            placeholder="Email"
+            placeholder={t("email")}
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             className={`px-3 py-2 border rounded-lg ${
@@ -94,39 +99,38 @@ export default function Register() {
           />
           {email && !emailValid && (
             <div className="text-sm text-red-600">
-              Введите корректный email
+              {t("errors.email")}
             </div>
           )}
 
           {/* PASSWORD */}
           <input
             type="password"
-            placeholder="Пароль"
+            placeholder={t("password")}
             value={password}
             onChange={(e) => setPassword(e.target.value)}
             className="px-3 py-2 border rounded-lg"
             required
           />
 
-          {/* PASSWORD RULES (animated) */}
+          {/* PASSWORD RULES */}
           <div
-            className={`
-              overflow-hidden transition-all duration-300
-              ${password.length > 0 ? "max-h-40 opacity-100" : "max-h-0 opacity-0"}
-            `}
+            className={`overflow-hidden transition-all duration-300 ${
+              password.length > 0 ? "max-h-40 opacity-100" : "max-h-0 opacity-0"
+            }`}
           >
             <div className="mt-2 space-y-1 text-base">
               <p className={passwordChecks.length ? "text-green-600" : "text-red-600"}>
-                • Минимум 8 символов
+                • {t("passwordRules.length")}
               </p>
               <p className={passwordChecks.lower ? "text-green-600" : "text-red-600"}>
-                • Строчная буква
+                • {t("passwordRules.lower")}
               </p>
               <p className={passwordChecks.upper ? "text-green-600" : "text-red-600"}>
-                • Заглавная буква
+                • {t("passwordRules.upper")}
               </p>
               <p className={passwordChecks.digit ? "text-green-600" : "text-red-600"}>
-                • Цифра
+                • {t("passwordRules.digit")}
               </p>
             </div>
           </div>
@@ -134,7 +138,7 @@ export default function Register() {
           {/* CONFIRM PASSWORD */}
           <input
             type="password"
-            placeholder="Повторите пароль"
+            placeholder={t("confirmPassword")}
             value={confirmPassword}
             onChange={(e) => setConfirmPassword(e.target.value)}
             className={`px-3 py-2 border rounded-lg ${
@@ -144,7 +148,7 @@ export default function Register() {
           />
           {confirmPassword && !isPasswordMatch && (
             <div className="text-sm text-red-600">
-              Пароли не совпадают
+              {t("errors.passwordMatch")}
             </div>
           )}
 
@@ -157,28 +161,28 @@ export default function Register() {
               className="mt-1"
             />
             <span>
-              Я соглашаюсь с{" "}
+              {t("agree.prefix")}{" "}
               <button
                 type="button"
                 onClick={() => setShowPrivacy(true)}
                 className="text-blue-600 hover:underline"
               >
-                Политикой конфиденциальности
+                {t("agree.privacy")}
               </button>{" "}
-              и{" "}
+              {t("agree.and")}{" "}
               <button
                 type="button"
                 onClick={() => setShowTerms(true)}
                 className="text-blue-600 hover:underline"
               >
-                Пользовательским соглашением
+                {t("agree.terms")}
               </button>
             </span>
           </label>
 
           {submitted && !agree && (
             <div className="text-sm text-red-600">
-              Необходимо согласие для продолжения
+              {t("errors.agree")}
             </div>
           )}
 
@@ -188,31 +192,33 @@ export default function Register() {
             disabled={!canSubmit}
             className="px-4 py-3 mt-4 text-white bg-blue-600 rounded-lg hover:bg-blue-700 disabled:opacity-50"
           >
-            {loading ? "Регистрация..." : "Зарегистрироваться"}
+            {loading ? t("loading") : t("submit")}
           </button>
         </form>
 
         <div className="pt-6 mt-8 text-sm text-center text-gray-600 border-t">
-          Уже есть аккаунт?{" "}
+          {t("already")}{" "}
           <Link to="/auth/login" className="text-blue-600 hover:underline">
-            Войти
+            {t("login")}
           </Link>
         </div>
       </div>
 
       {showPrivacy && (
-        <Modal title="Политика конфиденциальности" onClose={() => setShowPrivacy(false)}>
-          <p className="text-sm text-gray-700">
-            Здесь будет размещён текст политики конфиденциальности сервиса Osonly.
-          </p>
+        <Modal
+          title={t("privacyTitle")}
+          onClose={() => setShowPrivacy(false)}
+        >
+          <p className="text-sm text-gray-700">{t("privacyText")}</p>
         </Modal>
       )}
 
       {showTerms && (
-        <Modal title="Пользовательское соглашение" onClose={() => setShowTerms(false)}>
-          <p className="text-sm text-gray-700">
-            Здесь будет размещён текст пользовательского соглашения сервиса Osonly.
-          </p>
+        <Modal
+          title={t("termsTitle")}
+          onClose={() => setShowTerms(false)}
+        >
+          <p className="text-sm text-gray-700">{t("termsText")}</p>
         </Modal>
       )}
     </section>

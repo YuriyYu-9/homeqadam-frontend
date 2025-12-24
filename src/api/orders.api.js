@@ -36,3 +36,12 @@ export const acceptOrder = (orderId) =>
 // заказы, взятые мастером
 export const getTakenOrders = () =>
   api.get("/technician/orders/taken");
+
+
+/**
+ * ADMIN
+ */
+
+// все заказы в системе (админ-панель)
+export const getAllOrdersAdmin = () =>
+  api.get("/admin/orders");

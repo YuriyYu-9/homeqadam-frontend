@@ -1,34 +1,31 @@
 import { Link } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 import Container from "../ui/Container.jsx";
 
 export default function Footer() {
+  const { t } = useTranslation("footer");
   const year = new Date().getFullYear();
 
   return (
     <footer className="mt-16 bg-white border-t">
       <Container>
-        <div
-          className="flex flex-col gap-6 py-10 text-center  md:flex-row md:items-center md:justify-between md:text-left"
-        >
-          {/* LEFT */}
+        <div className="flex flex-col gap-6 py-10 md:flex-row md:items-center md:justify-between">
           <div className="text-sm text-gray-600">
-            © {year} <span className="font-medium">Osonly</span>. Все права защищены.
+            © {year} Osonly. {t("rights")}
           </div>
 
-          {/* RIGHT */}
-          <div className="flex flex-col items-center gap-3 text-sm md:flex-row md:gap-6">
+          <div className="flex flex-wrap text-sm gap-x-6 gap-y-2">
             <Link
               to="/legal"
-              className="text-gray-700 transition-colors hover:text-blue-600"
+              className="text-gray-700 hover:text-blue-600"
             >
-              Пользовательское соглашение
+              {t("terms")}
             </Link>
-
             <Link
               to="/privacy"
-              className="text-gray-700 transition-colors hover:text-blue-600"
+              className="text-gray-700 hover:text-blue-600"
             >
-              Политика конфиденциальности
+              {t("privacy")}
             </Link>
           </div>
         </div>

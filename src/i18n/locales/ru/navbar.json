@@ -1,16 +1,13 @@
 {
-  "brand": "Osonly",
-  "home": "Главная",
-  "about": "О нас",
+  "dashboard": "Кабинет",
+  "createOrder": "Сделать заказ",
+  "myOrders": "Мои заказы",
+  "findTechnician": "Найти мастера",
+  "findOrders": "Найти заказы",
+  "takenOrders": "Принятые заказы",
   "login": "Войти",
-  "register": "Регистрация",
-  "logout": "Выйти",
-  "client": {
-    "newOrder": "Сделать заказ",
-    "myOrders": "Мои заказы"
-  },
-  "tech": {
-    "orders": "Заказы",
-    "taken": "Принятые заказы"
-  }
+  "reviews": "Отзывы",
+  "about": "О нас",
+  "profile": "Профиль",
+  "logout": "Выйти"
 }

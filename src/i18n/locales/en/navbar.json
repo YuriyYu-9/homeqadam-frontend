@@ -1,0 +1,13 @@
+{
+  "dashboard": "Dashboard",
+  "createOrder": "Create order",
+  "myOrders": "My orders",
+  "findTechnician": "Find technician",
+  "findOrders": "Find orders",
+  "takenOrders": "Taken orders",
+  "login": "Login",
+  "reviews": "Reviews",
+  "about": "About",
+  "profile": "Profile",
+  "logout": "Logout"
+}
