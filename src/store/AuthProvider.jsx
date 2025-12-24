@@ -10,7 +10,9 @@ const AuthProvider = ({ children }) => {
   const [role, setRole] = useState(null);
   const [profileCompleted, setProfileCompleted] = useState(false);
   const [displayName, setDisplayName] = useState(null);
-  const [loading, setLoading] = useState(() => !!getToken());
+
+  const [loading, setLoading] = useState(!!getToken());
+  const [initialized, setInitialized] = useState(false); // 👈 ВАЖНО
 
   const loadSession = async () => {
     try {
@@ -19,14 +21,11 @@ const AuthProvider = ({ children }) => {
       setRole(userData.role);
 
       const profile = await profileMe();
-      const completed = !!profile?.completed;
-
-      setProfileCompleted(completed);
+      setProfileCompleted(!!profile?.completed);
 
       const fn = profile?.firstName || "";
       const ln = profile?.lastName || "";
       const dn = `${fn} ${ln}`.trim();
-
       setDisplayName(dn || userData.email);
     } catch {
       clearToken();
@@ -37,14 +36,17 @@ const AuthProvider = ({ children }) => {
       setDisplayName(null);
     } finally {
       setLoading(false);
+      setInitialized(true); // 👈 КЛЮЧЕВО
     }
   };
 
   useEffect(() => {
     if (!token) {
       setLoading(false);
+      setInitialized(true);
       return;
     }
+
     setLoading(true);
     loadSession();
   }, [token]);
@@ -53,6 +55,7 @@ const AuthProvider = ({ children }) => {
     saveToken(newToken);
     setToken(newToken);
     setLoading(true);
+    setInitialized(false);
   };
 
   const logout = () => {
@@ -63,9 +66,9 @@ const AuthProvider = ({ children }) => {
     setProfileCompleted(false);
     setDisplayName(null);
     setLoading(false);
+    setInitialized(true);
   };
 
-  // 🔥 НОВОЕ: публичный метод обновления профиля
   const refreshProfile = async () => {
     setLoading(true);
     await loadSession();
@@ -80,11 +83,12 @@ const AuthProvider = ({ children }) => {
       profileCompleted,
       displayName,
       loading,
+      initialized, // 👈 ОТДАЁМ
       loginWithToken,
       logout,
-      refreshProfile, // 👈 ВАЖНО
+      refreshProfile,
     }),
-    [token, user, role, profileCompleted, displayName, loading]
+    [token, user, role, profileCompleted, displayName, loading, initialized]
   );
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
